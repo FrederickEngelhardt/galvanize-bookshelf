@@ -33,27 +33,37 @@ router.post('/books', (req,res,next) => {
       description: req.body.description,
       cover_url: req.body.coverUrl,
   }, '*')
+  .returning(['id', 'title', 'author', 'genre', 'cover_url as coverUrl', 'description'])
   .then( result => {
-  let resultObj = {
-      id: result[0].id,
-      title: result[0].title,
-      author: result[0].author,
-      genre: result[0].genre,
-      cover_url: result[0].coverUrl,
-      description: result[0].description
-  }
-  console.log(resultObj);
-    res.send(resultObj)
+    res.status(200).send(result[0])
   })
   .catch((err) => {
     next(err)
   })
 })
-// router.patch('/books/:id', (req,res,next) => {
-//   res.send()
-// })
+router.patch('/books/:id', (req,res,next) => {
+  knex('books')
+  .where({id: req.params.id})
+  .update({
+      title: req.body.title,
+      author: req.body.author,
+      genre: req.body.genre,
+      description: req.body.description,
+      cover_url: req.body.coverUrl,
+  }, '*')
+  .returning(['id', 'title', 'author', 'genre', 'cover_url as coverUrl', 'description'])
+  .then( (result) => {
+    res.status(200).send(result[0])
+  })
+})
 router.delete('/books/:id', (req,res,next) => {
-  res.send()
+  return knex('books')
+  .where({id: req.params.id})
+  .del()
+  .returning(['title', 'author', 'genre', 'cover_url as coverUrl', 'created_at AS createdAt', 'description'])
+  .then( (data) => {
+    res.status(200).send(data[0])
+  })
 })
 
 
