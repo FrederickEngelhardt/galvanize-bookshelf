@@ -26,7 +26,6 @@ router.get('/books/:id', (req,res,next) => {
   })
 })
 router.post('/books', (req,res,next) => {
-  console.log(req.body);
   knex('books').insert({
       title: req.body.title,
       author: req.body.author,
@@ -36,7 +35,6 @@ router.post('/books', (req,res,next) => {
   }, '*')
   .returning(['id', 'title', 'author', 'genre', 'cover_url as coverUrl', 'description'])
   .then( result => {
-    console.log(result);
     res.status(200).send(result[0])
   })
   .catch((err) => {
